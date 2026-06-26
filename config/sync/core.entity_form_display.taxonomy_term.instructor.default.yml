@@ -1,0 +1,58 @@
+uuid: 72f35db8-e809-4e45-8be3-645a060e6797
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.instructor.field_profile
+    - field.field.taxonomy_term.instructor.field_profile_pic
+    - taxonomy.vocabulary.instructor
+  module:
+    - media_library
+    - path
+    - text
+id: taxonomy_term.instructor.default
+targetEntityType: taxonomy_term
+bundle: instructor
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_profile:
+    type: text_textarea_with_summary
+    weight: 3
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_profile_pic:
+    type: media_library_widget
+    weight: 1
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  status: true

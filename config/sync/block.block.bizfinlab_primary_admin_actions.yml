@@ -1,0 +1,20 @@
+uuid: ee99fe09-35ea-4750-a969-cf8cc76600a1
+langcode: en
+status: true
+dependencies:
+  theme:
+    - bizfinlab
+_core:
+  default_config_hash: Q9_2whdOj1YIomfvsIfopROW4FT_X5pY0DjdOiOaQ5U
+id: bizfinlab_primary_admin_actions
+theme: bizfinlab
+region: header
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }

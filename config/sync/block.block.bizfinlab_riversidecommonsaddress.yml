@@ -1,0 +1,23 @@
+uuid: e5c37752-a6db-433a-a705-3c5cd48e072f
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:722211cd-1ba0-4d4a-909c-7c9f5cc3447c'
+  module:
+    - block_content
+  theme:
+    - bizfinlab
+id: bizfinlab_riversidecommonsaddress
+theme: bizfinlab
+region: footer
+weight: -11
+provider: null
+plugin: 'block_content:722211cd-1ba0-4d4a-909c-7c9f5cc3447c'
+settings:
+  id: 'block_content:722211cd-1ba0-4d4a-909c-7c9f5cc3447c'
+  label: 'Riverside Commons address'
+  label_display: '0'
+  provider: block_content
+  view_mode: full
+visibility: {  }

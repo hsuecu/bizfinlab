@@ -1,0 +1,29 @@
+uuid: ed164ce6-56d0-416e-9a1d-4eeb74e9e341
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.programs
+  module:
+    - system
+    - views
+  theme:
+    - bizfinlab
+id: bizfinlab_views_block__programs_block_1
+theme: bizfinlab
+region: content
+weight: -7
+provider: null
+plugin: 'views_block:programs-block_1'
+settings:
+  id: 'views_block:programs-block_1'
+  label: 'More studio classes'
+  label_display: visible
+  provider: views
+  views_label: 'More studio classes'
+  items_per_page: null
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '/node/*'

@@ -1,0 +1,25 @@
+uuid: fc2e877b-c600-4737-87c3-d92196ef0cdf
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer---get-involved
+  module:
+    - system
+  theme:
+    - bizfinlab
+id: bizfinlab_footergetinvolved
+theme: bizfinlab
+region: footer
+weight: -8
+provider: null
+plugin: 'system_menu_block:footer---get-involved'
+settings:
+  id: 'system_menu_block:footer---get-involved'
+  label: 'Get Involved'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: null
+  expand_all_items: false
+visibility: {  }

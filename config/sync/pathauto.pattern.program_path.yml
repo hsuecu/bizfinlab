@@ -1,0 +1,23 @@
+uuid: 3eb0d08a-b5e0-4bc4-ac36-3724665edc46
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.program
+  module:
+    - node
+id: program_path
+label: 'Program Path'
+type: 'canonical_entities:node'
+pattern: '/[node:content-type]/[node:field_program_type]/[node:title]'
+selection_criteria:
+  10ce8704-d4c2-4c2c-b210-0000a6ac472d:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      program: program
+selection_logic: and
+weight: -5
+relationships: {  }

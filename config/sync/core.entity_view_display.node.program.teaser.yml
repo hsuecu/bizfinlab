@@ -1,0 +1,94 @@
+uuid: 7b5519f4-6228-4728-b705-a1e849a21cfb
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.program.body
+    - field.field.node.program.field_cancel_description
+    - field.field.node.program.field_class_size
+    - field.field.node.program.field_dates
+    - field.field.node.program.field_duration
+    - field.field.node.program.field_level
+    - field.field.node.program.field_location
+    - field.field.node.program.field_price
+    - field.field.node.program.field_price_description
+    - field.field.node.program.field_program_image
+    - field.field.node.program.field_program_instructor
+    - field.field.node.program.field_program_type
+    - field.field.node.program.field_schedule
+    - field.field.node.program.field_sessions
+    - field.field.node.program.field_sub_heading
+    - image.style.wide_body_card_image
+    - node.type.program
+  module:
+    - media
+    - text
+    - user
+id: node.program.teaser
+targetEntityType: node
+bundle: program
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_duration:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_price:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_program_image:
+    type: media_thumbnail
+    label: hidden
+    settings:
+      image_link: content
+      image_style: wide_body_card_image
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_program_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_schedule:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden:
+  field_cancel_description: true
+  field_class_size: true
+  field_dates: true
+  field_level: true
+  field_location: true
+  field_price_description: true
+  field_program_instructor: true
+  field_sessions: true
+  field_sub_heading: true
+  links: true

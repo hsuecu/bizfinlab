@@ -1,0 +1,19 @@
+uuid: 31b303fa-e0db-4ef2-b94c-7ec20631de28
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cancel_description
+    - node.type.program
+id: node.program.field_cancel_description
+field_name: field_cancel_description
+entity_type: node
+bundle: program
+label: 'Cancel description'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

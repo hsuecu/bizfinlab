@@ -1,0 +1,19 @@
+uuid: 6d0eb8c2-f4c7-4b54-801d-8c25732e9cc0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_class_size
+    - node.type.program
+id: node.program.field_class_size
+field_name: field_class_size
+entity_type: node
+bundle: program
+label: 'Class size'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

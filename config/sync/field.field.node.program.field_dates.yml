@@ -1,0 +1,19 @@
+uuid: 7a4f64c0-e032-451d-816d-805a71262729
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_dates
+    - node.type.program
+id: node.program.field_dates
+field_name: field_dates
+entity_type: node
+bundle: program
+label: Dates
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

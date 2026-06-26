@@ -1,0 +1,22 @@
+uuid: 43c6f3d1-b782-4744-a56c-f680b844c3dc
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - bizfinlab
+_core:
+  default_config_hash: VfPFqqxfkomud5CO8DUijw85QIl9GIxh_nIxLOYESxg
+id: bizfinlab_help
+theme: bizfinlab
+region: header
+weight: -6
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

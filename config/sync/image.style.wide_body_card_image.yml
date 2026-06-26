@@ -1,0 +1,14 @@
+uuid: 174a3717-ae60-4464-b486-220ee49b35ab
+langcode: en
+status: true
+dependencies: {  }
+name: wide_body_card_image
+label: 'wide body card image'
+effects:
+  d0a434ca-97d7-48f6-9e5b-000a4f5b3613:
+    uuid: d0a434ca-97d7-48f6-9e5b-000a4f5b3613
+    id: image_resize
+    weight: 1
+    data:
+      width: 1200
+      height: 675

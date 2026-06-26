@@ -1,0 +1,25 @@
+uuid: c89aaa76-12be-4be0-954e-ab9477b64d7c
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer---about
+  module:
+    - system
+  theme:
+    - bizfinlab
+id: bizfinlab_footerabout
+theme: bizfinlab
+region: footer
+weight: -9
+provider: null
+plugin: 'system_menu_block:footer---about'
+settings:
+  id: 'system_menu_block:footer---about'
+  label: About
+  label_display: visible
+  provider: system
+  level: 1
+  depth: null
+  expand_all_items: false
+visibility: {  }

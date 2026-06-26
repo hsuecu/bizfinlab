@@ -1,0 +1,22 @@
+uuid: cc0848ac-f193-4bc5-9d48-50abe3943013
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - bizfinlab
+_core:
+  default_config_hash: eYL19CLDyinGTWYQfBD1DswWzglEotE_kHnHx3AxTXM
+id: bizfinlab_powered
+theme: bizfinlab
+region: header
+weight: -3
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  label_display: '0'
+  provider: system
+visibility: {  }

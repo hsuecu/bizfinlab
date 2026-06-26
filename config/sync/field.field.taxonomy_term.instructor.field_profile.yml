@@ -1,0 +1,30 @@
+uuid: cc2e2970-1689-4115-a28c-d4980b36c7c3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_profile
+    - filter.format.basic_html
+    - filter.format.full_html
+    - filter.format.plain_text
+    - taxonomy.vocabulary.instructor
+  module:
+    - text
+id: taxonomy_term.instructor.field_profile
+field_name: field_profile
+entity_type: taxonomy_term
+bundle: instructor
+label: Profile
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats:
+    - basic_html
+    - full_html
+    - plain_text
+field_type: text_with_summary

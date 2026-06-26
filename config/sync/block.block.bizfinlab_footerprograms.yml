@@ -1,0 +1,25 @@
+uuid: eac30238-ed34-47bf-8820-a2576f0425d6
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer---programs
+  module:
+    - system
+  theme:
+    - bizfinlab
+id: bizfinlab_footerprograms
+theme: bizfinlab
+region: footer
+weight: -10
+provider: null
+plugin: 'system_menu_block:footer---programs'
+settings:
+  id: 'system_menu_block:footer---programs'
+  label: Programs
+  label_display: visible
+  provider: system
+  level: 1
+  depth: null
+  expand_all_items: false
+visibility: {  }

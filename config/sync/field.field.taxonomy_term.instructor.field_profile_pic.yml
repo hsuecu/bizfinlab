@@ -1,0 +1,29 @@
+uuid: 5ee6ec81-f482-45c4-9100-a3ebafb29257
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_profile_pic
+    - media.type.image
+    - taxonomy.vocabulary.instructor
+id: taxonomy_term.instructor.field_profile_pic
+field_name: field_profile_pic
+entity_type: taxonomy_term
+bundle: instructor
+label: 'Profile pic'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

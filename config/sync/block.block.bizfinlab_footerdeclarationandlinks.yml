@@ -1,0 +1,23 @@
+uuid: c9402284-9fc4-4943-a5ea-656fc8b39859
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:b7117667-6e07-46d3-84c1-021447c3007d'
+  module:
+    - block_content
+  theme:
+    - bizfinlab
+id: bizfinlab_footerdeclarationandlinks
+theme: bizfinlab
+region: footer_bottom
+weight: -10
+provider: null
+plugin: 'block_content:b7117667-6e07-46d3-84c1-021447c3007d'
+settings:
+  id: 'block_content:b7117667-6e07-46d3-84c1-021447c3007d'
+  label: 'Footer declaration and links'
+  label_display: '0'
+  provider: block_content
+  view_mode: full
+visibility: {  }

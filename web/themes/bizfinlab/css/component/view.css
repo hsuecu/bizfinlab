@@ -1,0 +1,30 @@
+.program-list .view-filters .views-exposed-form {
+    border: none;
+    box-shadow: none;
+    margin: 0px;
+    padding: 10px 0px;
+}
+
+.program-list {
+    margin-bottom: 2rem;
+}
+
+.pager {
+    --pager-active-bg-color: #000000 !important; 
+}
+
+.pager__item--action.pager__item--first {
+    display: none;
+}
+.pager__item--action.pager__item--last {
+    display: none;
+}
+.pager__item.pager__item--action a,
+.pager__item.pager__item--number a{
+    border: 1px solid #eaeaea;
+    border-radius: 999px;
+}
+
+.pager__item .pager__link {
+    padding: 20px;
+}

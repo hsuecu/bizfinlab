@@ -1,0 +1,47 @@
+{% set term = node.field_program_type.entity %}
+{% set metadata = [
+  node.field_duration.value ?? null,
+  node.field_schedule.value ?? null,
+  node.field_price.value ?? null
+] %}
+{% set cleaned = metadata|filter(v => v) %}
+{% set metadata_string = cleaned|join(' • ') %}
+
+
+<a href="{{ url }}" class="program-card__link">
+  {% if content.field_program_image %}
+    <div class="program-card__image">
+      {{ content.field_program_image }}
+    </div>
+  {% endif %}
+
+  <div class="program-card__content">
+
+    {% if term %}
+      <span class="program-card__category">
+        {{ include('bizfinlab:tag', {
+          label: term.label,
+          capitalized: true,
+          url: path('entity.taxonomy_term.canonical', {'taxonomy_term': term.id}),
+          variant: 'warning'
+        }) }}
+      </span>
+    {% endif %}
+
+    {% if label %}
+      <h3 class="program-card__title">
+        {{ label }}
+      </h3>
+    {% endif %}
+
+    {% if content.body %}
+      <div class="program-card__description">
+        {{ content.body }}
+      </div>
+    {% endif %}
+
+    <div class="program-card__metadata">
+      {{ metadata_string }}
+    </div>
+  </div>
+</a>

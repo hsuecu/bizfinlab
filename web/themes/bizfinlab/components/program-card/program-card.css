@@ -1,0 +1,41 @@
+.program-list .view-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.program-list .view-content .views-row .node {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.program-card__image img{
+    border-radius: 10px;
+}
+
+.program-card__content {
+    padding: 10px;
+}
+
+.program-card__description {
+  color: #6b6b6b;
+}
+
+.program-card__metadata {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .program-list .view-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .program-list .view-content {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,17 @@
+name: Tag
+description: Tag with ui elements
+props:
+  type: object
+  properties:
+    label:
+      type: string
+    capitalized:
+      type: boolean
+    url:
+      type: string
+    variant:
+      type: string
+      enum:
+        - default
+        - warning
+        - primary

@@ -1,0 +1,16 @@
+<div class="instructor-card">
+  {% if image %}
+    <div class="instructor-card__profile-pic">
+      <img src="{{ image }}" alt="{{ name }}">
+    </div>
+  {% endif %}
+    <div class="instructor-card__profile">
+      <h5>{{ name }}</h5>
+      <div class="instructor-card__intro">
+        {{ description|raw }}
+      </div>
+      <div class="instructor-card__desc">
+        {{ profile|raw }}
+      </div>
+    </div>
+</div>

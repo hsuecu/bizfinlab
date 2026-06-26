@@ -1,0 +1,7 @@
+name: Program Card
+description: Card view for Program node
+props:
+  type: object
+  properties:
+    url:
+      type: string

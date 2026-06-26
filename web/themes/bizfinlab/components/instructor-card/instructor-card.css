@@ -1,0 +1,26 @@
+.instructor-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.instructor-card__profile-pic {
+  flex: 0 0 auto;
+}
+.instructor-card__profile-pic img {
+  width: 100px;
+  height: 100px;
+  border-radius: 999px;
+}
+
+.instructor-card__profile {
+  flex: 1;
+}
+
+.instructor-card__profile * {
+  margin: 0px;
+  margin-bottom: 5px;
+}
+
+.instructor-card__intro {
+  color: #929292;
+}

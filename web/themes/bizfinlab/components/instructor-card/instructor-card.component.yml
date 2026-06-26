@@ -1,0 +1,11 @@
+name: instructor-card
+description: Instructor card for taxonomy-based instructor display
+props:
+  name:
+    type: string
+  description:
+    type: string
+  profile:
+    type: string
+  image:
+    type: string

@@ -1,0 +1,15 @@
+{% set text = label %}
+
+{% if is_capitalized %}
+  {% set text = text|upper %}
+{% endif %}
+
+{% if url %}
+  <a href="{{ url }}" class="tag tag--{{ variant|default('default') }}">
+    {{ text }}
+  </a>
+{% else %}
+  <span class="tag tag--{{ variant|default('default') }}">
+    {{ text }}
+  </span>
+{% endif %}

@@ -1,0 +1,30 @@
+.tag {
+  display: inline;
+  padding: 0.25rem 0.6rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.85rem;
+  text-decoration: none;
+  line-height: 1.5rem;
+}
+
+.tag:hover {
+    color: #d9822b;
+}
+
+/* Variants */
+.tag--default {
+  border-color: #d0d0d0;
+  color: #333;
+}
+
+.tag--primary {
+  border-color: #2f6fed;
+  color: #2f6fed;
+}
+
+.tag--warning {
+  border-color: #ffeddb;
+  color: #d9822b;
+  background-color: #ffeddb;
+}

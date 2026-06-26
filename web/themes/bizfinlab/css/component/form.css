@@ -1,0 +1,27 @@
+
+.program-filter-item ul{
+   list-style: none;
+   display: flex;
+   margin: 0px;
+   margin-bottom: 30px;
+   flex-wrap: wrap;
+   row-gap: 33px;
+}
+
+.program-filter-item li a {
+    text-decoration: none;
+    color: #252525;
+    border: 1px solid #eaeaea;
+    padding: 10px;
+    border-radius: 999px;
+    margin: 10px;
+}
+
+.program-filter-item li a.bef-link--selected {
+    color: #eaeaea;
+    background-color: #252525;
+}
+
+.form-item--field-program-type-target-id .form-item__label {
+    display: none;
+}

@@ -69,12 +69,23 @@
     view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
   ]
 %}
+{% set term = node.field_program_type.entity %}
 {{ attach_library('claro/classy.node') }}
 <article{{ attributes.addClass(classes) }}>
 
   <div class="program-layout container">
 
     <div class="program-main">
+    {% if term %}
+      <span class="program-card__category">
+        {{ include('bizfinlab:tag', {
+          label: term.label,
+          capitalized: true,
+          url: path('entity.taxonomy_term.canonical', {'taxonomy_term': term.id}),
+          variant: 'warning'
+        }) }}
+      </span>
+    {% endif %}
       {% if content.field_sub_heading %}
         <div class="program-subheading">
           {{ content.field_sub_heading }}

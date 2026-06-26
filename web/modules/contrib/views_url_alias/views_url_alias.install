@@ -1,0 +1,124 @@
+<?php
+
+/**
+ * @file
+ * Installation information for the Views URL alias module.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_install().
+ */
+function views_url_alias_install() {
+  // Set the weight to 2 so that this module executes after pathauto.
+  module_set_weight('views_url_alias', 2);
+  \Drupal::moduleHandler()->loadInclude('views_url_alias', 'module');
+  views_url_alias_flag_rebuild_if_needed();
+}
+
+/**
+ * Implements hook_schema().
+ */
+function views_url_alias_schema() {
+  return [
+    'views_url_alias' => [
+      'description' => 'A second url alias table for only content alias.',
+      'fields' => [
+        'rid' => [
+          'description' => 'Primary Key: Unique views_url_alias record ID.',
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'size' => 'big',
+        ],
+        'entity_type' => [
+          'type' => 'varchar_ascii',
+          'not null' => TRUE,
+          'default' => 'node',
+          'length' => EntityTypeInterface::ID_MAX_LENGTH,
+          'description' => 'The entity_type of the entity to which this comment is a reply.',
+        ],
+        'entity_id' => [
+          'description' => 'The related entity_id for the url alias.',
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ],
+        'langcode' => [
+          'description' => "The language code this alias is for; if 'und', the alias will be used for unknown languages. Each Drupal path can have an alias for each supported language.",
+          'type' => 'varchar_ascii',
+          'length' => 12,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'alias' => [
+          'description' => 'The alias for this path; e.g. title-of-the-story.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+      ],
+      'primary key' => ['rid'],
+      'indexes' => [
+        'entity_id_entity_type_langcode' => [
+          'entity_type',
+          'entity_id',
+          'langcode',
+        ],
+        'alias' => [
+          'alias',
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function views_url_alias_requirements($phase) {
+  $requirements = [];
+  if ($phase === 'runtime') {
+    if (views_url_alias_needs_rebuild()) {
+      $requirements['views_url_alias'] = [
+        'title' => t('Views URL Alias'),
+        'value' => t('Needs rebuild'),
+        'severity' => REQUIREMENT_WARNING,
+        'description' => t('If you have just installed the Views URL Alias module or have caused URL alias changes without invoking hooks, you need to rebuild the index table. <a href=":rebuild">Rebuild index table</a>', [
+          ':rebuild' => Url::fromRoute('views_url_alias.views_url_alias_admin_form')->toString(),
+        ]),
+      ];
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Install indexes, add new column, add primary key.
+ */
+function views_url_alias_update_10301() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $schema->dropTable('views_url_alias');
+  $schema->createTable('views_url_alias', views_url_alias_schema()['views_url_alias']);
+  views_url_alias_flag_rebuild_if_needed();
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Reinstall the schema, rebuild views_url_alias table.
+ */
+function views_url_alias_update_10302() {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $schema->dropTable('views_url_alias');
+  $schema->createTable('views_url_alias', views_url_alias_schema()['views_url_alias']);
+  views_url_alias_flag_rebuild_if_needed();
+}

@@ -1,0 +1,6 @@
+views_url_alias.admin:
+  title: 'Rebuild views alias table'
+  description: 'Rebuild the Views URL alias table.'
+  route_name: views_url_alias.views_url_alias_admin_form
+  parent: system.admin_config_search
+  weight: 20

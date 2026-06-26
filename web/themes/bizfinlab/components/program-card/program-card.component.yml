@@ -5,3 +5,6 @@ props:
   properties:
     url:
       type: string
+    show_details:
+      type: boolean
+      default: true

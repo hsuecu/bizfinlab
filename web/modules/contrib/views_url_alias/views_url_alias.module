@@ -1,0 +1,432 @@
+<?php
+
+/**
+ * @file
+ * Allows content entity Views to be filtered by path aliases.
+ */
+
+use Drupal\Core\Batch\BatchBuilder;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\TranslatableInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Utility\Error;
+use Drupal\path_alias\PathAliasInterface;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+
+/**
+ * Gets the path entity type.
+ *
+ * @param \Drupal\path_alias\PathAliasInterface $path_alias
+ *   Path alias object.
+ *
+ * @return \Drupal\Core\Entity\ContentEntityInterface|null
+ *   Returns the entity type.
+ */
+function views_url_alias_get_path_entity_type(PathAliasInterface $path_alias): ?ContentEntityInterface {
+  /** @var \Drupal\Core\Routing\Router $router */
+  $router = \Drupal::service('router.no_access_checks');
+  try {
+    $result = $router->match($path_alias->getPath());
+  }
+  catch (ResourceNotFoundException $e) {
+    \Drupal::logger('views_url_alias')->warning('Route not found for alias, @alias.', ['@alias' => $path_alias->getPath()]);
+    return NULL;
+  }
+  catch (\Exception $e) {
+    $logger = \Drupal::logger('views_url_alias');
+    Error::logException($logger, $e);
+    return NULL;
+  }
+  /** @var \Symfony\Component\Routing\Route $route */
+  $route = $result['_route_object'];
+  $params = $route->getOption('parameters');
+  $entity_type = '';
+  foreach ($params as $param) {
+    if (isset($param['type'])) {
+      $entity_type = explode(':', $param['type'])[1];
+      break;
+    }
+  }
+
+  $result = $result[$entity_type] ?? NULL;
+
+  // Ensure correct translation is loaded.
+  if ($result && $result instanceof TranslatableInterface) {
+    if ($result->hasTranslation($path_alias->language()->getId())) {
+      $result = $result->getTranslation($path_alias->language()->getId());
+    }
+  }
+
+  // Only return the entity if it's a ContentEntityInterface.
+  if ($result instanceof ContentEntityInterface) {
+    return $result;
+  }
+
+  return NULL;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for 'path_alias'.
+ *
+ * Inserts a path alias into the views_url_alias table.
+ */
+function views_url_alias_path_alias_insert(PathAliasInterface $path_alias): void {
+  $entity = views_url_alias_get_path_entity_type($path_alias);
+  if ($entity) {
+    views_url_alias_save($entity, $path_alias->getAlias());
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for 'path_alias'.
+ *
+ * Respond to a path being updated.
+ */
+function views_url_alias_path_alias_update(PathAliasInterface $path_alias): void {
+  // Check if the alias has actually changed.
+  if (isset($path_alias->original) && $path_alias->getAlias() === $path_alias->original->getAlias()) {
+    return;
+  }
+
+  $entity = views_url_alias_get_path_entity_type($path_alias);
+  if ($entity) {
+    views_url_alias_save($entity, $path_alias->getAlias());
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for 'path_alias'.
+ *
+ * Respond to a path being deleted.
+ */
+function views_url_alias_path_alias_delete(PathAliasInterface $path): void {
+  $entity = views_url_alias_get_path_entity_type($path);
+  if ($entity) {
+    views_url_alias_save($entity);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function views_url_alias_form_pathauto_admin_delete_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['#submit'][] = 'views_url_alias_form_pathauto_admin_delete_submit';
+}
+
+/**
+ * Submit processing for bulk delete of aliases.
+ */
+function views_url_alias_form_pathauto_admin_delete_submit($form, FormStateInterface $form_state) {
+  $database = \Drupal::database();
+  if ($form_state->getValue('delete')['all_aliases']) {
+    $database->truncate('views_url_alias')->execute();
+  }
+  else {
+    /** @var \Drupal\pathauto\AliasTypeManager $aliasManager */
+    $aliasManager = \Drupal::service('plugin.manager.alias_type');
+    foreach ($form_state->getValue('delete')['plugins'] as $plugin_id => $value) {
+      if ($value) {
+        $definition = $aliasManager->getDefinition($plugin_id);
+        foreach ($definition['types'] as $entity_type) {
+          $database->delete('views_url_alias')
+            ->condition('entity_type', $entity_type);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function views_url_alias_form_path_alias_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We need info from the alias record before it's deleted.
+  array_unshift($form['#submit'], 'views_url_alias_form_path_alias_delete_submit');
+}
+
+/**
+ * Submit for path alias delete form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Current form state.
+ */
+function views_url_alias_form_path_alias_delete_submit(array $form, FormStateInterface $form_state) {
+  $build_info = $form_state->getBuildInfo();
+  if (isset($build_info['args'][0])) {
+    $alias_id = $build_info['args'][0];
+    $alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+    /** @var \Drupal\path_alias\Entity\PathAlias $alias */
+    $alias = $alias_storage->load($alias_id);
+    $entity = views_url_alias_get_path_entity_type($alias);
+    if ($entity) {
+      views_url_alias_save($entity);
+    }
+  }
+}
+
+/**
+ * Save URL alias.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Entity object.
+ * @param string|null $alias
+ *   Alias.
+ */
+function views_url_alias_save(EntityInterface $entity, $alias = NULL) {
+  // Save URL alias only for entity types with numeric IDs.
+  if (!ctype_digit($entity->id())) {
+    return;
+  }
+
+  $database = \Drupal::database();
+  $database->delete('views_url_alias')
+    ->condition('entity_id', $entity->id())
+    ->condition('entity_type', $entity->getEntityTypeId())
+    ->condition('langcode', $entity->language()->getId())
+    ->execute();
+
+  if (empty($alias)) {
+    return;
+  }
+
+  try {
+    $database->insert('views_url_alias')
+      ->fields([
+        'alias' => $alias,
+        'entity_id' => $entity->id(),
+        'entity_type' => $entity->getEntityTypeId(),
+        'langcode' => $entity->language()->getId(),
+      ])
+      ->execute();
+  }
+  catch (Exception $e) {
+    Error::logException(\Drupal::logger('views_url_alias'), $e);
+  }
+}
+
+/**
+ * Rebuild view_url_alias table.
+ *
+ * This function merely sets a batch that will process all path aliases.
+ * The caller is responsible for making sure that the batch is executed.
+ */
+function views_url_alias_rebuild_path(): void {
+  $database = \Drupal::database();
+  // Purge view_url_alias table.
+  $database->truncate('views_url_alias')->execute();
+
+  // Load all path IDs.
+  $path_ids = $database->select('path_alias', 'pa')
+    ->fields('pa', ['id'])
+    ->orderBy('id')
+    ->execute()->fetchCol();
+
+  // Split path IDs up in processable chunks.
+  $split_path_ids = array_chunk($path_ids, 50);
+
+  // Create batch.
+  $batch_builder = (new BatchBuilder())
+    ->setTitle(' Rebuilding the Views URL Alias table.')
+    ->setProgressMessage('Processed @current out of @total chunks. Estimated time remaining: @estimate.')
+    ->setErrorMessage('Step @current completed with an error.')
+    ->setFinishCallback('_views_url_alias_rebuild_path_finished');
+
+  // Fill batch.
+  foreach ($split_path_ids as $chunk) {
+    $batch_builder->addOperation('_views_url_alias_rebuild_path_process', [$chunk]);
+  }
+
+  // Set batch.
+  batch_set($batch_builder->toArray());
+}
+
+/**
+ * Processes a chunk of path IDs.
+ *
+ * @param array $path_ids
+ *   The path IDs to be processed.
+ *
+ * @throws Exception
+ */
+function _views_url_alias_rebuild_path_process(array $path_ids): void {
+  /** @var \Drupal\path_alias\PathAliasStorage $path_aliases */
+  $path_alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $languages = \Drupal::languageManager()->getLanguages();
+  /** @var \Drupal\path_alias\PathAliasInterface $path_alias $path_alias */
+
+  foreach ($path_alias_storage->loadMultiple($path_ids) as $path_alias) {
+    foreach ($languages as $language) {
+      if ($path_alias->hasTranslation($language->getId())) {
+        $translated_path_alias = $path_alias->getTranslation($language->getId());
+        if ($translated_path_alias instanceof PathAliasInterface) {
+          $entity = views_url_alias_get_path_entity_type($translated_path_alias);
+          if ($entity instanceof ContentEntityInterface && $entity->hasTranslation($language->getId())) {
+            $translated_entity = $entity->getTranslation($language->getId());
+            views_url_alias_save($translated_entity, $translated_path_alias->getAlias());
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function views_url_alias_views_data() {
+  $real_table_name = 'views_url_alias';
+
+  // Define table group.
+  $data[$real_table_name]['table']['group'] = 'Alias';
+  $data[$real_table_name]['table']['provider'] = 'views_url_alias';
+
+  $data[$real_table_name]['table']['base'] = [
+    'field' => 'entity_id',
+    'title' => t('URL alias'),
+    'help' => t('Mapping table contains entity_ids and their associated path aliases.'),
+    'weight' => -10,
+  ];
+
+  $data[$real_table_name]['entity_id'] = [
+    'title' => t('id of the entity'),
+    'help' => t('ID of the entity this alias is for.'),
+  ];
+  $data[$real_table_name]['alias'] = [
+    'title' => t('URL alias'),
+    'help' => t('The alias for a Entity.'),
+    'field' => [
+      'id' => 'standard',
+      'click sortable' => TRUE,
+    ],
+    'sort' => [
+      'id' => 'string',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+  ];
+
+  /** @var \Drupal\Core\Entity\EntityTypeManager $entity_type_manage */
+  $entity_type_manage = \Drupal::service('entity_type.manager');
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityType[] $entity_definitions */
+  $entity_definitions = $entity_type_manage->getDefinitions();
+
+  foreach ($entity_definitions as $entity_definition) {
+    $reflectedClass = new ReflectionClass($entity_definition->getClass());
+    if ($reflectedClass->isSubclassOf('\Drupal\Core\Entity\ContentEntityBase')) {
+      $type = $entity_definition->id();
+      $data_table = $entity_definition->getDataTable();
+      $entity_id = $entity_definition->getKey('id');
+      $langcode = $entity_definition->getKey('langcode');
+      $data[$data_table]['views_url_alias']['relationship'] = [
+        'title' => t('@definition_label URL Alias', [
+          '@definition_label' => $entity_definition->getLabel(),
+        ]),
+        'label' => t('@definition_label URL Alias', [
+          '@definition_label' => $entity_definition->getLabel(),
+        ]),
+        'help' => t('Relate @definition_label with it is URL Alias', [
+          '@definition_label' => $entity_definition->getLabel(),
+        ]),
+        'base' => $real_table_name,
+        'base field' => 'entity_id',
+        'real field' => $entity_id,
+        'id' => 'standard',
+        'extra' => [
+          [
+            'field' => 'entity_type',
+            'value' => $type,
+          ],
+          [
+            'left_field' => $langcode,
+            'field' => 'langcode',
+          ],
+        ],
+      ];
+    }
+  }
+
+  return $data;
+}
+
+/**
+ * Indicate if the batch processing was successful.
+ *
+ * @param bool $success
+ *   The success flag.
+ * @param array $results
+ *   The results.
+ * @param array $operations
+ *   The operations.
+ */
+function _views_url_alias_rebuild_path_finished($success, $results, $operations): void {
+  // Setup final message after process is done.
+  if ($success) {
+    \Drupal::messenger()->addStatus(t('All paths have been processed.'));
+    views_url_alias_needs_rebuild(FALSE);
+  }
+  else {
+    \Drupal::messenger()->addError(t('An error occurred while processing the paths.'));
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function views_url_alias_help($route_name, RouteMatchInterface $route_match) {
+  // Remind site administrators about the {views_url_alias} table being flagged
+  // for rebuild. We don't need to issue the message on the confirm form, or
+  // while the rebuild is being processed.
+  if ($route_name != 'views_url_alias.views_url_alias_admin_form' && $route_name != 'system.batch_page.html' && $route_name != 'help.page.views_url_alias' && $route_name != 'help.main'
+    && \Drupal::currentUser()
+      ->hasPermission('administer views') && views_url_alias_needs_rebuild()) {
+    $message = t('The Views URL Alias table needs to be rebuilt. <a href=":rebuild">Rebuild table</a>.', [
+      ':rebuild' => Url::fromRoute('views_url_alias.views_url_alias_admin_form')
+        ->toString(),
+    ]);
+    \Drupal::messenger()->addWarning($message);
+  }
+}
+
+/**
+ * Check to see if the URL alias table might need rebuilding.
+ */
+function views_url_alias_flag_rebuild_if_needed() {
+  // We only need to flag for a rebuild if there are path aliases.
+  /** @var \Drupal\path_alias\PathAliasStorage $path_aliases */
+  $path_alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  if ($path_alias_storage->getQuery()->accessCheck(FALSE)->count()->execute()) {
+    views_url_alias_needs_rebuild(TRUE);
+  }
+}
+
+/**
+ * Toggles or reads the value of a flag for rebuilding views_url_alias table.
+ *
+ * When the flag is set, a message is displayed to users with 'administer views'
+ * permission, pointing to the 'rebuild' confirm form.
+ *
+ * @param bool|null $rebuild
+ *   (optional) The boolean value to be written.
+ *
+ * @return bool|null
+ *   The current value of the flag if no value was provided for $rebuild. If a
+ *   value was provided for $rebuild, nothing (NULL) is returned.
+ */
+function views_url_alias_needs_rebuild($rebuild = NULL) {
+  if (!isset($rebuild)) {
+    return \Drupal::state()->get('views_url_alias.needs_rebuild', FALSE);
+  }
+  elseif ($rebuild) {
+    \Drupal::state()->set('views_url_alias.needs_rebuild', TRUE);
+  }
+  else {
+    \Drupal::state()->delete('views_url_alias.needs_rebuild');
+  }
+}

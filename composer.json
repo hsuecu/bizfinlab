@@ -24,6 +24,7 @@
         "drupal/easy_breadcrumb": "^2.0",
         "drupal/field_group": "^4.0",
         "drupal/pathauto": "^1.15",
+        "drupal/views_url_alias": "^3.2",
         "drush/drush": "^13.7"
     },
     "conflict": {

@@ -34,7 +34,7 @@
       </h3>
     {% endif %}
 
-    {% if content.body %}
+    {% if content.body and show_details %}
       <div class="program-card__description">
         {{ content.body }}
       </div>

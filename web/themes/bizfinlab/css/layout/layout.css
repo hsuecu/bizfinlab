@@ -141,9 +141,14 @@
   }
 
   .program-mobile-sidebar {
-    display: inline-block;
+    display: block;
     min-width: 180px;
-    margin: auto;
+    margin: 20px auto;
+    width: fit-content;
+  }
+
+  .sm-center {
+    display: block;
   }
 
   .program-layout {

@@ -70,14 +70,20 @@
   ]
 %}
 
-{% set image = content.field_program_image[0] ?? null %}
-{% set image_uri = image['#item'].entity.uri.value ? file_url(image['#item'].entity.uri.value) : null %}
+{% set metadata = [
+  node.field_duration.value ?? null,
+  node.field_schedule.value ?? null,
+  node.field_price.value ?? null
+] %}
 
 {{ attach_library('claro/classy.node') }}
 <article{{ attributes.addClass(classes) }}>
 {% embed 'bizfinlab:program-card' with {
-  image: image_uri,
-  show_details: false
+  url: url,
+  label: label,
+  metadata: metadata,
+  program_image: content.field_program_image,
+  category_term: node.field_program_type.entity
 } %}
 {% endembed %}
 </article>

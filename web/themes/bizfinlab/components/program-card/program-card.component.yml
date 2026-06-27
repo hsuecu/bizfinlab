@@ -5,6 +5,14 @@ props:
   properties:
     url:
       type: string
-    show_details:
-      type: boolean
-      default: true
+    label:
+      type: string
+    metadata:
+      type: array
+      items: string
+    program_image:
+      type: object
+    body:
+      type: object
+    category_term:
+      type: object

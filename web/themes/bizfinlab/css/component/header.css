@@ -27,6 +27,16 @@
   list-style: none;
 }
 
+.region-header .block-menu .menu .menu-item--cta__dark a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  display: block;
+  padding: .5rem .5rem;
+  border-radius: 5px;
+  background-color: #111;
+}
+
 .region-header .block-menu .menu a {
   text-decoration: none;
   color: #333;
@@ -87,6 +97,16 @@
   }
 
   .region-header .block-menu .menu a {
+    padding: 1rem;
+  }
+
+  .region-header .block-menu .menu .menu-item.menu-item--cta__dark {
+    padding: 0rem;
+  }
+
+  .region-header .block-menu .menu .menu-item--cta__dark a {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
     padding: 1rem;
   }
 }

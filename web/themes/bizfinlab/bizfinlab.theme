@@ -10,20 +10,33 @@ declare(strict_types=1);
 /**
  * Implements hook_preprocess_HOOK() for html.html.twig.
  */
-function bizfinlab_preprocess_html(array &$variables): void {
+function bizfinlab_preprocess_html(array &$variables): void
+{
 
 }
 
 /**
  * Implements hook_preprocess_HOOK() for page.html.twig.
  */
-function bizfinlab_preprocess_page(array &$variables): void {
+function bizfinlab_preprocess_page(array &$variables): void
+{
 
 }
 
 /**
  * Implements hook_preprocess_HOOK() for node.html.twig.
  */
-function bizfinlab_preprocess_node(array &$variables): void {
+function bizfinlab_preprocess_node(array &$variables): void
+{
 
+}
+
+
+function bizfinlab_preprocess_menu(array &$variables): void
+{
+    foreach ($variables['items'] as &$item) {
+        if ($item['title'] === 'Donate') {
+            $item['attributes']->addClass('menu-item--cta__dark');
+        }
+    }
 }

@@ -11,7 +11,7 @@ _core:
 id: bizfinlab_site_branding
 theme: bizfinlab
 region: header
-weight: -5
+weight: -7
 provider: null
 plugin: system_branding_block
 settings:

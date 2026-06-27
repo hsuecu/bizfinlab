@@ -9,7 +9,7 @@ _core:
 id: bizfinlab_primary_admin_actions
 theme: bizfinlab
 region: header
-weight: -10
+weight: -11
 provider: null
 plugin: local_actions_block
 settings:
